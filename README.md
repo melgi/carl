@@ -1,7 +1,7 @@
 # Carl: Another Rule Language
 
 Carl is a tool for parsing [N3](http://www.w3.org/TeamSubmission/n3/) files and outputting the resulting triples in "N3P" format.
-"N3P" is a RDF/rules serialization format used by the [Eye reasoner](http://eulersharp.sourceforge.net/).
+"N3P" is a RDF/rules serialization format used by [The EYE Reasoner](http://github.com/josd/eye).
 
 ## Usage
 
@@ -9,7 +9,7 @@ Carl is a tool for parsing [N3](http://www.w3.org/TeamSubmission/n3/) files and 
 
 * `-b=baseUri` the base URI to use when resolving relative URIs.
 * `-o=output-file` where the results are written, write to stdout when omitted.
-* `input-files` the Turtle input files to process, read from stdin when omitted.
+* `input-files` the N3 input files to process, read from stdin when omitted.
 
 ## Limitations
 
