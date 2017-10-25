@@ -111,7 +111,7 @@ namespace n3 {
 		void propertylist(const N3Node *subject);
 		void property(const N3Node *subject);
 		std::string iri();
-		void objectlist(const N3Node *subject, const URIResource *property);
+		void objectlist(const N3Node *subject, const Resource *property);
 		std::unique_ptr<N3Node> object(GraphTemplate *graph = nullptr);
 		std::unique_ptr<Literal> dtlang(std::string &&lexicalValue);
 		std::unique_ptr<RDFList> collection(GraphTemplate *graph);
@@ -123,9 +123,9 @@ namespace n3 {
 		void propertylistvar(GraphTemplate *graph, const N3Node *subject);
 		void propertyorvar(GraphTemplate *graph, const N3Node *subject);
 		std::unique_ptr<N3Node> subjectorvar(GraphTemplate *graph);
-		void objectlistvar(GraphTemplate *graph, const N3Node *subject, const URIResource *property);
+		void objectlistvar(GraphTemplate *graph, const N3Node *subject, const Resource *property);
 		void objectlistvar(GraphTemplate *graph, const N3Node *subject, const Var *property);
-		void addTriple(GraphTemplate *graph, const N3Node *subject, const URIResource *property);
+		void addTriple(GraphTemplate *graph, const N3Node *subject, const Resource *property);
 		void addTriple(GraphTemplate *graph, const N3Node *subject, const Var *property);
 		
 		std::unique_ptr<N3Node> objectorvar(GraphTemplate *graph);

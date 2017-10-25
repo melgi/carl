@@ -20,7 +20,7 @@
 
 #define CARL_MAJOR_VERSION     1
 #define CARL_MINOR_VERSION     0
-#define CARL_PATCH_VERSION     0
+#define CARL_PATCH_VERSION     1
 //#define CARL_QUALIFIER_VERSION "SNAPSHOT"
 
 

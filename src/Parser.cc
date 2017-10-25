@@ -195,7 +195,7 @@ namespace n3 {
 		
 		m_base = resolve(std::move(u));
 	}
-
+	
 	void Parser::prefixID()
 	{
 		match(Token::Prefix);
@@ -209,7 +209,7 @@ namespace n3 {
 		m_sink->prefix(prefix, ns);
 		m_prefixMap[prefix] = ns;
 	}
-
+	
 	void Parser::sparqlBase()
 	{
 		match(Token::SparqlBase);
@@ -219,7 +219,7 @@ namespace n3 {
 		
 		m_base = resolve(std::move(u));
 	}
-
+	
 	void Parser::sparqlPrefix()
 	{
 		match(Token::SparqlPrefix);
@@ -245,7 +245,7 @@ namespace n3 {
 			if (m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS) {
 				const URIResource property(iri());
 				std::unique_ptr<BlankNode> b(new BlankNode(m_blanks.generate()));
-			
+				
 				if (forward) {
 					m_sink->triple(*s, property, *b);
 				} else {
@@ -253,8 +253,33 @@ namespace n3 {
 				}
 				
 				s = std::move(b);
+			} else if (m_lookAhead == Token::BlankNodeLabel) {
+				match();
+				const BlankNode property(m_blanks.generate(m_lexeme.substr(2)));
+				
+				std::unique_ptr<BlankNode> b(new BlankNode(m_blanks.generate()));
+				
+				if (forward) {
+					m_sink->triple(*s, property, *b);
+				} else {
+					m_sink->triple(*b, property, *s);
+				}
+				
+				s = std::move(b);
+			} else if (m_lookAhead == '[') {
+				std::unique_ptr<BlankNode> property = blanknodepropertylist();
+				
+				std::unique_ptr<BlankNode> b(new BlankNode(m_blanks.generate()));
+				
+				if (forward) {
+					m_sink->triple(*s, *property, *b);
+				} else {
+					m_sink->triple(*b, *property, *s);
+				}
+				
+				s = std::move(b);
 			} else
-				throw ParseException("expected IRI ref or prefixed name as path", line());
+				throw ParseException("expected IRI ref, prefixed name or blanknode as path", line());
 		}
 		
 		return s;
@@ -271,12 +296,38 @@ namespace n3 {
 			
 			if (m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS) {
 				const URIResource property(iri());
+				
 				std::unique_ptr<BlankNode> b(new BlankNode(m_blanks.generate()));
-			
+				
 				if (forward) {
 					graph->triple(*s, property, *b);
 				} else {
 					graph->triple(*b, property, *s);
+				}
+				
+				s = std::move(b);
+			} else if (m_lookAhead == Token::BlankNodeLabel) {
+				match();
+				const BlankNode property(m_blanks.generate(m_lexeme.substr(2)));
+				
+				std::unique_ptr<BlankNode> b(new BlankNode(m_blanks.generate()));
+				
+				if (forward) {
+					graph->triple(*s, property, *b);
+				} else {
+					graph->triple(*b, property, *s);
+				}
+				
+				s = std::move(b);
+			} else if (m_lookAhead == '[') {
+				const std::unique_ptr<BlankNode> property = blanknodepropertylist();
+				
+				std::unique_ptr<BlankNode> b(new BlankNode(m_blanks.generate()));
+			
+				if (forward) {
+					graph->triple(*s, *property, *b);
+				} else {
+					graph->triple(*b, *property, *s);
 				}
 				
 				s = std::move(b);
@@ -351,16 +402,16 @@ namespace n3 {
 	
 	void Parser::propertylist(const N3Node *subject)
 	{
-		if (m_lookAhead == 'a' || m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies) {
+		if (m_lookAhead == 'a' || m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS || m_lookAhead == Token::BlankNodeLabel || m_lookAhead == '[' || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies) {
 			property(subject);
 			while (m_lookAhead == ';') {
 				match();
-				if (m_lookAhead == 'a' || m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies) {
+				if (m_lookAhead == 'a' || m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS || m_lookAhead == Token::BlankNodeLabel || m_lookAhead == '[' || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies) {
 					property(subject);
 				}
 			}
 		} else
-			throw ParseException("expected property", line());
+			throw ParseException("expected 'a' or uri as property", line());
 	}
 	
 	void Parser::property(const N3Node *subject)
@@ -371,6 +422,13 @@ namespace n3 {
 		} else if (m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS) {
 			URIResource property(iri());
 			objectlist(subject, &property);
+		} else if (m_lookAhead == Token::BlankNodeLabel) {
+			match();
+			BlankNode property(m_blanks.generate(m_lexeme.substr(2)));
+			objectlist(subject, &property);
+		} else if (m_lookAhead == '[') {
+			std::unique_ptr<BlankNode> property = blanknodepropertylist();
+			objectlist(subject, property.get());
 		} else if (m_lookAhead == Token::Implies) {
 			match();
 			objectlist(subject, &LOG::implies);
@@ -402,7 +460,7 @@ namespace n3 {
 			throw ParseException("expected IRI ref or prefixed name", line());
 	}
 	
-	void Parser::objectlist(const N3Node *subject, const URIResource *property)
+	void Parser::objectlist(const N3Node *subject, const Resource *property)
 	{
 		if (m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::BlankNodeLabel || m_lookAhead == Token::PNameNS || m_lookAhead == '{' || m_lookAhead == '[' || m_lookAhead == '(' ||
 		    m_lookAhead == Token::StringLiteralQuote || m_lookAhead == Token::StringLiteralSingleQuote || m_lookAhead == Token::StringLiteralLongSingleQuote || m_lookAhead == Token::StringLiteralLongQuote ||
@@ -498,7 +556,7 @@ namespace n3 {
 		
 		return std::unique_ptr<Literal>(new StringLiteral(std::move(lexicalValue)));
 	}
-
+	
 	std::unique_ptr<RDFList> Parser::collection(GraphTemplate *graph)
 	{
 		std::unique_ptr<RDFList> list(new RDFList());
@@ -539,13 +597,13 @@ namespace n3 {
 	
 	void Parser::propertylistopt(const N3Node *subject)
 	{
-		if (m_lookAhead == 'a' || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameLN || m_lookAhead == Token::PNameNS || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies)
+		if (m_lookAhead == 'a' || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameLN || m_lookAhead == Token::PNameNS || m_lookAhead == Token::BlankNodeLabel || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies)
 			propertylist(subject);
 	}
 	
 	void Parser::propertylistoptvar(GraphTemplate *graph, const N3Node *subject)
 	{
-		if (m_lookAhead == Token::Var || m_lookAhead == 'a' || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameLN || m_lookAhead == Token::PNameNS || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies)
+		if (m_lookAhead == Token::Var || m_lookAhead == 'a' || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameLN || m_lookAhead == Token::PNameNS || m_lookAhead == Token::BlankNodeLabel || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies)
 			propertylistvar(graph, subject);
 	}
 	
@@ -560,7 +618,7 @@ namespace n3 {
 			    m_lookAhead == Token::StringLiteralQuote || m_lookAhead == Token::StringLiteralSingleQuote || m_lookAhead == Token::StringLiteralLongSingleQuote || m_lookAhead == Token::StringLiteralLongQuote ||
 			    m_lookAhead == Token::True || m_lookAhead == Token::False || m_lookAhead == Token::Integer || m_lookAhead == Token::Decimal || m_lookAhead == Token::Double) {
 				std::unique_ptr<N3Node> s = subjectorvar(graph.get());
-
+				
 				s = std::move(path(s.release(), graph.get()));
 				
 				propertylistvar(graph.get(), s.get());
@@ -587,16 +645,16 @@ namespace n3 {
 	
 	void Parser::propertylistvar(GraphTemplate *graph, const N3Node *subject)
 	{
-		if (m_lookAhead == Token::Var || m_lookAhead == 'a' || m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies) {
+		if (m_lookAhead == Token::Var || m_lookAhead == 'a' || m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS || m_lookAhead == Token::BlankNodeLabel || m_lookAhead == '[' || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies) {
 			propertyorvar(graph, subject);
 			while (m_lookAhead == ';') {
 				match();
-				if (m_lookAhead == Token::Var || m_lookAhead == 'a' || m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies) {
+				if (m_lookAhead == Token::Var || m_lookAhead == 'a' || m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS || m_lookAhead == Token::BlankNodeLabel || m_lookAhead == '[' || m_lookAhead == '=' || m_lookAhead == Token::Implies || m_lookAhead == Token::ReverseImplies) {
 					propertyorvar(graph, subject);
 				}
 			}
 		} else
-			throw ParseException("expected property", line());
+			throw ParseException("expected var or uri as property", line());
 	}
 	
 	void Parser::propertyorvar(GraphTemplate *graph, const N3Node *subject)
@@ -611,6 +669,13 @@ namespace n3 {
 		} else if (m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::PNameNS) {
 			URIResource property(iri());
 			objectlistvar(graph, subject, &property);
+		} else if (m_lookAhead == Token::BlankNodeLabel) {
+			match();
+			BlankNode property(m_blanks.generate(m_lexeme.substr(2)));
+			objectlist(subject, &property);
+		} else if (m_lookAhead == '[') {
+			std::unique_ptr<BlankNode> property = blanknodepropertylist();
+			objectlist(subject, property.get());
 		} else if (m_lookAhead == Token::Implies) {
 			match();
 			objectlistvar(graph, subject, &LOG::implies);
@@ -621,7 +686,7 @@ namespace n3 {
 			match();
 			objectlistvar(graph, subject, &OWL::sameAs);
 		} else
-			throw ParseException("expected 'a' or uri as property", line());
+			throw ParseException("expected var or uri as property", line());
 	}
 	
 	std::unique_ptr<N3Node> Parser::subjectorvar(GraphTemplate *graph)
@@ -635,17 +700,17 @@ namespace n3 {
 		return subject(graph);
 	}
 	
-	void Parser::addTriple(GraphTemplate *graph, const N3Node *subject, const URIResource *property)
+	void Parser::addTriple(GraphTemplate *graph, const N3Node *subject, const Resource *property)
 	{
 		if (m_lookAhead == '[') { // this hack rearanges the order of some triples for performance reasons
 			graph->triple(*subject, *property, BlankNode(""));
-							
+			
 			std::size_t p = graph->size() - 1;
 			
 			std::unique_ptr<N3Node> obj = objectorvar(graph);
 		
 			obj = std::move(path(obj.release(), graph));
-							
+			
 			(*graph)[p].object(*obj);
 		} else {
 			std::unique_ptr<N3Node> obj = objectorvar(graph);
@@ -656,7 +721,7 @@ namespace n3 {
 		}
 	}
 	
-	void Parser::objectlistvar(GraphTemplate *graph, const N3Node *subject, const URIResource *property)
+	void Parser::objectlistvar(GraphTemplate *graph, const N3Node *subject, const Resource *property)
 	{
 		if (m_lookAhead == Token::Var || m_lookAhead == Token::PNameLN || m_lookAhead == Token::IriRef || m_lookAhead == Token::BlankNodeLabel || m_lookAhead == Token::PNameNS || m_lookAhead == '{' || m_lookAhead == '[' || m_lookAhead == '(' || m_lookAhead == Token::StringLiteralQuote || m_lookAhead == Token::StringLiteralSingleQuote || m_lookAhead == Token::StringLiteralLongSingleQuote || m_lookAhead == Token::StringLiteralLongQuote || m_lookAhead == Token::True || m_lookAhead == Token::False || m_lookAhead == Token::Integer || m_lookAhead == Token::Decimal || m_lookAhead == Token::Double) {
 			
@@ -677,19 +742,19 @@ namespace n3 {
 	{
 		if (m_lookAhead == '[') { // this hack rearanges the order of some triples for performance reasons
 			graph->triple(*subject, *property, BlankNode(""));
-							
+			
 			std::size_t p = graph->size() - 1;
 			
 			std::unique_ptr<N3Node> obj = objectorvar(graph);
-		
+			
 			obj = std::move(path(obj.release(), graph));
-							
+			
 			(*graph)[p].object(*obj);
 		} else {
 			std::unique_ptr<N3Node> obj = objectorvar(graph);
-		
+			
 			obj = std::move(path(obj.release(), graph));
-		
+			
 			graph->triple(*subject, *property, *obj);
 		}
 	}
@@ -822,7 +887,7 @@ namespace n3 {
 		
 		return buf;
 	}
-
+	
 	std::string Parser::extractString(const std::string &stringLiteral)
 	{
 		// Because of the lexer produced stringLiteral, we can assume that the its value is "well formed":

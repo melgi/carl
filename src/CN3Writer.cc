@@ -430,6 +430,7 @@ namespace n3 {
 				property.visit(m_formatter);
 				m_out.write(", ", 2);
 			} else {
+				// TODO throw error here?
 				property.visit(m_formatter);
 				m_out.put('(');
 			}
@@ -438,8 +439,8 @@ namespace n3 {
 			m_out.put(',').put(' ');
 			object.visit(m_formatter);
 			
-			if (property.isVar())
-				m_out.put(')');
+			//if (property.isVar())
+			m_out.put(')');
 
 			++m_count;
 		}

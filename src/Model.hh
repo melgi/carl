@@ -148,14 +148,14 @@ namespace n3 {
 	};
 	
 
-	class RDFList : public Resource {
+	class RDFList : public N3Node {
 		std::vector<N3Node *> m_elements;
 		
 		typedef std::vector<N3Node *>::iterator iterator;
 		typedef std::vector<N3Node *>::const_iterator const_iterator;
 		
 	public:
-		RDFList() : m_elements() {}
+		RDFList() : N3Node(), m_elements() {}
 		
 		RDFList(const RDFList &list) : RDFList()
 		{
@@ -662,7 +662,7 @@ namespace n3 {
 			m_triples.swap(other.m_triples);
 		}
 		
-		void triple(const N3Node &subject, const URIResource &property, const N3Node &object)
+		void triple(const N3Node &subject, const Resource &property, const N3Node &object)
 		{
 			m_triples.push_back(TriplePattern(subject, property, object));
 		}
