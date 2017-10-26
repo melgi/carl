@@ -263,30 +263,30 @@ namespace n3 {
 	
 	void CN3Writer::writePrologue()
 	{
-		m_out << ":- style_check(-discontiguous)."; endl();
-		m_out << ":- style_check(-singleton)."; endl();
-		m_out << ":- multifile(exopred/3)."; endl();
-		m_out << ":- multifile(implies/3)."; endl();
-		m_out << ":- multifile(pfx/2)."; endl();
-		m_out << ":- multifile(pred/1)."; endl();
-		m_out << ":- multifile(prfstep/8)."; endl();
-		m_out << ":- multifile(scope/1)."; endl();
-		m_out << ":- multifile(scount/1)."; endl();
-		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/fl-rules#mu>'/2)."; endl();
-		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/fl-rules#pi>'/2)."; endl();
-		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/fl-rules#sigma>'/2)."; endl();
-		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#biconditional>'/2)."; endl();
-		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#conditional>'/2)."; endl();
-		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#reflexive>'/2)."; endl();
-		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#relabel>'/2)."; endl();
-		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#tactic>'/2)."; endl();
-		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#transaction>'/2)."; endl();
-		m_out << ":- multifile('<http://www.w3.org/1999/02/22-rdf-syntax-ns#first>'/2)."; endl();
-		m_out << ":- multifile('<http://www.w3.org/1999/02/22-rdf-syntax-ns#rest>'/2)."; endl();
-		m_out << ":- multifile('<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>'/2)."; endl();
-		m_out << ":- multifile('<http://www.w3.org/2000/10/swap/log#implies>'/2)."; endl();
-		m_out << ":- multifile('<http://www.w3.org/2000/10/swap/log#outputString>'/2)."; endl();
-		m_out << ":- multifile('<http://www.w3.org/2002/07/owl#sameAs>'/2)."; endl();
+//		m_out << ":- style_check(-discontiguous)."; endl();
+//		m_out << ":- style_check(-singleton)."; endl();
+//		m_out << ":- multifile(exopred/3)."; endl();
+//		m_out << ":- multifile(implies/3)."; endl();
+//		m_out << ":- multifile(pfx/2)."; endl();
+//		m_out << ":- multifile(pred/1)."; endl();
+//		m_out << ":- multifile(prfstep/8)."; endl();
+//		m_out << ":- multifile(scope/1)."; endl();
+//		m_out << ":- multifile(scount/1)."; endl();
+//		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/fl-rules#mu>'/2)."; endl();
+//		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/fl-rules#pi>'/2)."; endl();
+//		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/fl-rules#sigma>'/2)."; endl();
+//		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#biconditional>'/2)."; endl();
+//		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#conditional>'/2)."; endl();
+//		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#reflexive>'/2)."; endl();
+//		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#relabel>'/2)."; endl();
+//		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#tactic>'/2)."; endl();
+//		m_out << ":- multifile('<http://eulersharp.sourceforge.net/2003/03swap/log-rules#transaction>'/2)."; endl();
+//		m_out << ":- multifile('<http://www.w3.org/1999/02/22-rdf-syntax-ns#first>'/2)."; endl();
+//		m_out << ":- multifile('<http://www.w3.org/1999/02/22-rdf-syntax-ns#rest>'/2)."; endl();
+//		m_out << ":- multifile('<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>'/2)."; endl();
+//		m_out << ":- multifile('<http://www.w3.org/2000/10/swap/log#implies>'/2)."; endl();
+//		m_out << ":- multifile('<http://www.w3.org/2000/10/swap/log#outputString>'/2)."; endl();
+//		m_out << ":- multifile('<http://www.w3.org/2002/07/owl#sameAs>'/2)."; endl();
 		m_out << "flag('no-skolem', '" << N3PFormatter::SKOLEM_PREFIX << "')."; endl();
 	}
 
@@ -301,41 +301,41 @@ namespace n3 {
 	void CN3Writer::outputProperty(const std::string &uri)
 	{
 #ifdef CARL_N3P_CESU8
-		m_out.write(":- dynamic('<", 13);
-		m_formatter.outputUri(uri);
-		m_out.write(">'/2).", 6);
-		endl();
-		m_out.write(":- multifile('<", 15);
-		m_formatter.outputUri(uri);
-		m_out.write(">'/2).", 6);
-		endl();
+//		m_out.write(":- dynamic('<", 13);
+//		m_formatter.outputUri(uri);
+//		m_out.write(">'/2).", 6);
+//		endl();
+//		m_out.write(":- multifile('<", 15);
+//		m_formatter.outputUri(uri);
+//		m_out.write(">'/2).", 6);
+//		endl();
 //		m_out.write("pred('<", 7);
 //		m_formatter.outputUri(uri);
 //		m_out.write(">').", 4);
 //		endl();
 #else /* !CARL_N3P_CESU8 */
 		if (uri.find('\'') == std::string::npos) {
-			m_out.write(":- dynamic('<", 13);
-			m_out.write(uri.c_str(), uri.length());
-			m_out.write(">'/2).", 6);
-			endl();
-			m_out.write(":- multifile('<", 15);
-			m_out.write(uri.c_str(), uri.length());
-			m_out.write(">'/2).", 6);
-			endl();
+//			m_out.write(":- dynamic('<", 13);
+//			m_out.write(uri.c_str(), uri.length());
+//			m_out.write(">'/2).", 6);
+//			endl();
+//			m_out.write(":- multifile('<", 15);
+//			m_out.write(uri.c_str(), uri.length());
+//			m_out.write(">'/2).", 6);
+//			endl();
 //			m_out.write("pred('<", 7);
 //			m_out.write(uri.c_str(), uri.length());
 //			m_out.write(">').", 4);
 //			endl();
 		} else {
-			m_out.write(":- dynamic('<", 13);
-			m_formatter.outputUri(uri);
-			m_out.write(">'/2).", 6);
-			endl();
-			m_out.write(":- multifile('<", 15);
-			m_formatter.outputUri(uri);
-			m_out.write(">'/2).", 6);
-			endl();
+//			m_out.write(":- dynamic('<", 13);
+//			m_formatter.outputUri(uri);
+//			m_out.write(">'/2).", 6);
+//			endl();
+//			m_out.write(":- multifile('<", 15);
+//			m_formatter.outputUri(uri);
+//			m_out.write(">'/2).", 6);
+//			endl();
 //			m_out.write("pred('<", 7);
 //			m_formatter.outputUri(uri);
 //			m_out.write(">').", 4);
