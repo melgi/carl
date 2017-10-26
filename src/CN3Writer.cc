@@ -297,10 +297,11 @@ namespace n3 {
 		
 		m_out << std::flush;
 	}
+
 	
-	void CN3Writer::outputProperty(const std::string &uri)
-	{
-#ifdef CARL_N3P_CESU8
+//	void CN3Writer::outputProperty(const std::string &uri)
+//	{
+//#ifdef CARL_N3P_CESU8
 //		m_out.write(":- dynamic('<", 13);
 //		m_formatter.outputUri(uri);
 //		m_out.write(">'/2).", 6);
@@ -313,8 +314,8 @@ namespace n3 {
 //		m_formatter.outputUri(uri);
 //		m_out.write(">').", 4);
 //		endl();
-#else /* !CARL_N3P_CESU8 */
-		if (uri.find('\'') == std::string::npos) {
+//#else /* !CARL_N3P_CESU8 */
+//		if (uri.find('\'') == std::string::npos) {
 //			m_out.write(":- dynamic('<", 13);
 //			m_out.write(uri.c_str(), uri.length());
 //			m_out.write(">'/2).", 6);
@@ -327,7 +328,7 @@ namespace n3 {
 //			m_out.write(uri.c_str(), uri.length());
 //			m_out.write(">').", 4);
 //			endl();
-		} else {
+//		} else {
 //			m_out.write(":- dynamic('<", 13);
 //			m_formatter.outputUri(uri);
 //			m_out.write(">'/2).", 6);
@@ -340,9 +341,10 @@ namespace n3 {
 //			m_formatter.outputUri(uri);
 //			m_out.write(">').", 4);
 //			endl();
-		}
-#endif /* CARL_N3P_CESU8 */
-	}
+//		}
+//#endif /* CARL_N3P_CESU8 */
+//	}
+	
 	
 	void CN3Writer::outputTriple(const N3Node &subject, const URIResource &property, const N3Node &object, const GraphTemplate *graph)
 	{
@@ -460,26 +462,26 @@ namespace n3 {
 		return Optional<std::string>(static_cast<const URIResource &>(property).uri());
 	}
 	
-	void CN3Writer::handleProperties(const GraphTemplate &graph)
-	{
-		for (const TriplePattern &t : graph) {
-			const N3Node &subject = t.subject();
-			if (subject.isGraphTemplate())
-				handleProperties(static_cast<const GraphTemplate &>(subject));
-			
-			const N3Node &property = t.property();
-			if (property.isURIResource()) {
-				const std::string &uri = static_cast<const URIResource &>(property).uri();
-				if (!(uri == LOG::implies.uri() || uri == LOG::reverseImplies.uri())) {
-					if (m_properties.insert(uri).second)
-						outputProperty(uri);
-				}
-			}
-			
-			const N3Node &object = t.object();
-			if (object.isGraphTemplate())
-				handleProperties(static_cast<const GraphTemplate &>(object));
-		}
-	}
+//	void CN3Writer::handleProperties(const GraphTemplate &graph)
+//	{
+//		for (const TriplePattern &t : graph) {
+//			const N3Node &subject = t.subject();
+//			if (subject.isGraphTemplate())
+//				handleProperties(static_cast<const GraphTemplate &>(subject));
+//			
+//			const N3Node &property = t.property();
+//			if (property.isURIResource()) {
+//				const std::string &uri = static_cast<const URIResource &>(property).uri();
+//				if (!(uri == LOG::implies.uri() || uri == LOG::reverseImplies.uri())) {
+//					if (m_properties.insert(uri).second)
+//						outputProperty(uri);
+//				}
+//			}
+//			
+//			const N3Node &object = t.object();
+//			if (object.isGraphTemplate())
+//				handleProperties(static_cast<const GraphTemplate &>(object));
+//		}
+//	}
 	
 }

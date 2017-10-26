@@ -18,7 +18,7 @@
 #include <iostream>
 #include <string>
 #include <cstddef>
-#include <unordered_set>
+//#include <unordered_set>
 #include <stdexcept>
 #include <vector>
 
@@ -186,12 +186,12 @@ namespace n3 {
 		std::ostream &m_out;
 		N3PFormatter m_formatter;
 		std::string m_source;
-		std::unordered_set<std::string> m_properties;
+//		std::unordered_set<std::string> m_properties;
 
-		void outputProperty(const std::string &uri);
+//		void outputProperty(const std::string &uri);
 		
 		static Optional<std::string> extractPredicate(const GraphTemplate &graph);
-		void handleProperties(const GraphTemplate &graph);
+//		void handleProperties(const GraphTemplate &graph);
 		
 		void output(const N3Node &node)
 		{
@@ -211,7 +211,7 @@ namespace n3 {
 		
 	public:
 		
-		CN3Writer(std::ostream &out) : DefaultTripleSink(), m_out(out), m_formatter(*this, out, false), m_source(), m_properties()
+		CN3Writer(std::ostream &out) : DefaultTripleSink(), m_out(out), m_formatter(*this, out, false), m_source()/*, m_properties()*/
 		{
 			// nop
 		}
@@ -245,20 +245,20 @@ namespace n3 {
 		
 		void triple(const N3Node &subject, const N3Node &property, const N3Node &object) override
 		{
-			if (subject.isGraphTemplate())
-				handleProperties(static_cast<const GraphTemplate &>(subject));
-			
-			if (object.isGraphTemplate())
-				handleProperties(static_cast<const GraphTemplate &>(object));
+//			if (subject.isGraphTemplate())
+//				handleProperties(static_cast<const GraphTemplate &>(subject));
+//			
+//			if (object.isGraphTemplate())
+//				handleProperties(static_cast<const GraphTemplate &>(object));
 			
 			if (property.isURIResource()) {
 				const URIResource &resource = static_cast<const URIResource &>(property);
-				const std::string &uri = resource.uri();
-				
-				if (!(uri == LOG::implies.uri() || uri == LOG::reverseImplies.uri())) {
-					if (m_properties.insert(uri).second)
-						outputProperty(uri);
-				}
+//				const std::string &uri = resource.uri();
+//				
+//				if (!(uri == LOG::implies.uri() || uri == LOG::reverseImplies.uri())) {
+//					if (m_properties.insert(uri).second)
+//						outputProperty(uri);
+//				}
 				outputTriple(subject, resource, object);
 			} else {
 				outputTriple(subject, property, object);
