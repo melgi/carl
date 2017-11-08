@@ -377,7 +377,7 @@ namespace n3 {
 					m_formatter.output(g, true);
 					m_out.put(' ');
 				}
-			} else if (subject.isVar()) {
+			} else if (subject.isVar() || subject.isBlankNode()) {
 				if (graph) {
 					m_out.put('(');
 				}
