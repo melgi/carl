@@ -672,10 +672,10 @@ namespace n3 {
 		} else if (m_lookAhead == Token::BlankNodeLabel) {
 			match();
 			BlankNode property(m_blanks.generate(m_lexeme.substr(2)));
-			objectlist(subject, &property);
+			objectlistvar(graph, subject, &property);
 		} else if (m_lookAhead == '[') {
 			std::unique_ptr<BlankNode> property = blanknodepropertylist();
-			objectlist(subject, property.get());
+			objectlistvar(graph, subject, property.get());
 		} else if (m_lookAhead == Token::Implies) {
 			match();
 			objectlistvar(graph, subject, &LOG::implies);
