@@ -17,3 +17,8 @@ Carl is a tool for parsing [N3](http://www.w3.org/TeamSubmission/n3/) files and 
 * The rules for matching terminal symbols do not follow the team submission, but are adapted to match the Turtle and SPARQL grammar terminals.
 * Variables are not allowed outside of graphs.
 * Literals, lists and graphs are not allowed as property.
+
+## Flex compilation issue
+
+The `N3Lexer.cc` file included in the source tarball is generated with Flex version 2.5.35. If Flex installed on your system is newer, you might see compilation errors.
+In that case, you can execute `make maintainer-clean src/N3Lexer.cc` to regenerate `N3Lexer.cc`.
