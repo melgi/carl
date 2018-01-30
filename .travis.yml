@@ -4,7 +4,6 @@ language: cpp
 
 install: export CXX=g++-4.8 CC=gcc-4.8
 
-script: make && make test
 
 addons:
     apt:
@@ -16,6 +15,8 @@ addons:
 
 jobs:
   include:
+    - stage: compile
+      script: make
     - stage: trigger downstream
       jdk: oraclejdk8
       script: |
