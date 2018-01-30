@@ -3,6 +3,10 @@
 Carl is a tool for parsing [N3](http://www.w3.org/TeamSubmission/n3/) files and outputting the resulting triples in "N3P" format.
 "N3P" is a RDF/rules serialization format used by the [Eye reasoner](http://eulersharp.sourceforge.net/).
 
+## Build status
+
+[![Build Status](https://travis-ci.org/melgi/carl.svg?branch=master)](https://travis-ci.org/melgi/carl)
+
 ## Usage
 
 `carl [-b=base-uri] [-o=output-file] [input-files]`
