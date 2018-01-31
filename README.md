@@ -21,6 +21,7 @@ Carl is a tool for parsing [N3](http://www.w3.org/TeamSubmission/n3/) files and 
 * The rules for matching terminal symbols do not follow the team submission, but are adapted to match the Turtle and SPARQL grammar terminals.
 * Variables are not allowed outside of graphs.
 * Literals, lists and graphs are not allowed as property.
+* Unlike N3, there is no implicit prefix definition for the default namespace (`@prefix : <#>.`).
 
 ## Flex compilation issue
 
